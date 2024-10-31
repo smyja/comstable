@@ -14,19 +14,17 @@ npm install -g hardhat
 
 ### Project Setup
 
-1. Create a new directory and initialize:
+1. Clone the repo and initialize:
 ```bash
-mkdir commune-hardhat-project
-cd commune-hardhat-project
 npm init -y
 ```
 
-2. Install required dependencies:
+1. Install required dependencies:
 ```bash
 npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts dotenv
 ```
 
-3. Initialize Hardhat:
+1. Initialize Hardhat:
 ```bash
 npx hardhat init
 ```
