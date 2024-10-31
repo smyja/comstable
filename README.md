@@ -285,36 +285,7 @@ main()
   });
 ```
 
-## Best Practices
 
-1. **Security**
-   - Never commit `.env` files
-   - Use `@openzeppelin/contracts` for standard implementations
-   - Always run tests before deployment
-
-2. **Gas Optimization**
-   - Use appropriate Solidity compiler optimization settings
-   - Implement gas-efficient patterns in your contracts
-   - Monitor gas prices on the network
-
-3. **Testing**
-   - Write comprehensive unit tests
-   - Test on local network before deploying
-   - Use hardhat console.log for debugging
-
-4. **Deployment**
-   - Keep track of deployed contract addresses
-   - Verify contracts after deployment
-   - Document deployment parameters
-
-## Troubleshooting
-
-Common issues and solutions:
-- **Nonce too high**: Reset MetaMask account
-- **Gas estimation failed**: Check contract constructor parameters
-- **Network connection issues**: Verify RPC URL and network status
-- **Compilation errors**: Check Solidity version compatibility
-- **Deployment timeout**: Adjust gas price or limit
 
 ## Additional Resources
 
