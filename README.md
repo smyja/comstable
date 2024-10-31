@@ -35,9 +35,12 @@ Select "Create a JavaScript project" when prompted.
 Create a `.env` file in your project root:
 
 ```plaintext
-PRIVATE_KEY=your_private_key_here
+PRIVATE_KEY=your_private_key_here_for_your_ethereum wallet
 COMMUNE_RPC_URL=https://testnet.api.communeai.net
 ```
+Make sure you have COMAI testnet tokens in your wallet.
+You can read the first section on transferring tokens from your substrate wallet to your erc-20 address here: 
+https://communeai.org/docs/subspace/evm then continue if you haven't done that already.
 
 ## Project Configuration
 
