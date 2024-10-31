@@ -1,120 +1,323 @@
-# Subspace EVM Contract Deployment
-
-This project demonstrates deploying an EVM-compatible smart contract on a **Substrate-based blockchain** with EVM support (such as Subspace). The project uses a simple mock USDT token contract written in Solidity and deploys it via the Substrate EVM pallet.
-
-## Table of Contents
-
-- [Subspace EVM Contract Deployment](#subspace-evm-contract-deployment)
-  - [Table of Contents](#table-of-contents)
-  - [Overview](#overview)
-  - [Requirements](#requirements)
-  - [Setup](#setup)
-  - [Contract Compilation](#contract-compilation)
-  - [Contract Deployment](#contract-deployment)
-  - [Check Balance](#check-balance)
-  - [Interact with Deployed Contract](#interact-with-deployed-contract)
-  - [Troubleshooting](#troubleshooting)
-  - [License](#license)
+# Commune EVM Integration Guide with Hardhat
 
 ## Overview
 
-This project compiles and deploys a simple ERC-20-compatible token contract (MockUSDT) on the **Subspace** blockchain testnet or mainnet, which supports EVM-based smart contracts.
+Commune's EVM (Ethereum Virtual Machine) compatibility allows developers to deploy and execute smart contracts using modern development tools like Hardhat. This guide covers the setup, development, and deployment process using Hardhat on Commune's testnet.
 
-## Requirements
+## Prerequisites
 
-Before you begin, ensure you have the following installed:
+### Required Global Installations
+```bash
+npm install -g npm@latest
+npm install -g hardhat
+```
 
-- [Node.js](https://nodejs.org/en/) (version 16.x or higher)
-- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-- Subspace RPC URL for testnet or mainnet (available in `.env` file)
-- Solidity compiler (`solc`) for contract compilation
+### Project Setup
 
-## Setup
+1. Create a new directory and initialize:
+```bash
+mkdir commune-hardhat-project
+cd commune-hardhat-project
+npm init -y
+```
 
-1. **Clone the repository:**
+2. Install required dependencies:
+```bash
+npm install --save-dev hardhat @nomicfoundation/hardhat-toolbox @openzeppelin/contracts dotenv
+```
 
-   ```bash
-   git clone https://github.com/smyja/comai_stablecoin.git
-   cd comai_stablecoin
-   ```
+3. Initialize Hardhat:
+```bash
+npx hardhat init
+```
+Select "Create a JavaScript project" when prompted.
 
-2. **Install dependencies:**
+### Environment Setup
 
-   ```bash
-   npm install
-   ```
+Create a `.env` file in your project root:
 
-3. **Create a `.env` file:**
+```plaintext
+PRIVATE_KEY=your_private_key_here
+COMMUNE_RPC_URL=https://testnet.api.communeai.net
+```
 
-   Create a `.env` file in the root directory to store your RPC URL and mnemonic for the deployer account:
+## Project Configuration
 
-   ```bash
-   touch .env
-   ```
+### Hardhat Config
 
-   Add the following content:
+Replace the contents of `hardhat.config.js` with:
 
-   ```env
-   RPC_URL=wss://testnet.api.communeai.net
-   MNEMONIC="your wallet mnemonic here"
-   ```
+```javascript
+require("@nomicfoundation/hardhat-toolbox");
+require('dotenv').config();
 
-## Contract Compilation
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const COMMUNE_RPC_URL = process.env.COMMUNE_RPC_URL;
 
-1. **Compile the smart contract** using the following command:
+module.exports = {
+  solidity: "0.8.20",
+  networks: {
+    commune: {
+      url: COMMUNE_RPC_URL,
+      accounts: [PRIVATE_KEY],
+      chainId: 9461,
+      gasPrice: 1000000000,  // 1 gwei
+    },
+    hardhat: {
+      chainId: 31337
+    }
+  },
+  paths: {
+    sources: "./contracts",
+    tests: "./test",
+    cache: "./cache",
+    artifacts: "./artifacts"
+  }
+};
+```
 
-   ```bash
-   node src/compile.js
-   ```
+## Smart Contract Development
 
-   This will compile the `MockUSDT.sol` contract and output the ABI and bytecode in the `MockUSDT.json` file.
+### Sample ERC-20 Token Contract
 
-2. **Check the compilation output** to ensure the contract compiled successfully. The ABI and bytecode should be generated in `MockUSDT.json`.
+Create `contracts/MyToken.sol`:
 
-## Contract Deployment
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.20;
 
-1. **Deploy the contract** to the Subspace EVM-compatible chain:
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
-   ```bash
-   node src/deploy.js
-   ```
+contract MyToken is ERC20, Ownable {
+    constructor(
+        string memory name,
+        string memory symbol,
+        uint256 initialSupply
+    ) ERC20(name, symbol) Ownable(msg.sender) {
+        _mint(msg.sender, initialSupply);
+    }
 
-   - The script will deploy the contract using the account derived from the mnemonic in the `.env` file.
-   - If successful, the terminal will output the Ethereum-compatible contract address.
+    function mint(address to, uint256 amount) public onlyOwner {
+        _mint(to, amount);
+    }
+}
+```
 
-2. **Confirm the deployment** by checking the logs. You should see a message indicating successful deployment and the contract address.
+### Test Script
 
-## Check Balance
+Create `test/MyToken.test.js`:
 
-Before deploying, ensure the deployer account has enough native tokens (e.g., COMAI) to cover transaction fees:
+```javascript
+const { expect } = require("chai");
+const { ethers } = require("hardhat");
 
-1. **Check balance** using the provided balance check script:
+describe("MyToken", function () {
+  let myToken;
+  let owner;
+  let addr1;
+  let addr2;
 
-   ```bash
-   node src/checkBalance.js
-   ```
+  beforeEach(async function () {
+    [owner, addr1, addr2] = await ethers.getSigners();
+    
+    const MyToken = await ethers.getContractFactory("MyToken");
+    myToken = await MyToken.deploy(
+      "MyToken",
+      "MTK",
+      ethers.parseEther("1000000") // 1 million tokens
+    );
+  });
 
-   The output will display the deployer address and its current balance.
+  describe("Deployment", function () {
+    it("Should set the right owner", async function () {
+      expect(await myToken.owner()).to.equal(owner.address);
+    });
 
-## Interact with Deployed Contract
+    it("Should assign the total supply of tokens to the owner", async function () {
+      const ownerBalance = await myToken.balanceOf(owner.address);
+      expect(await myToken.totalSupply()).to.equal(ownerBalance);
+    });
+  });
 
-Once the contract is deployed, you can interact with it using the ABI and contract address. You can write additional scripts to:
+  describe("Transactions", function () {
+    it("Should transfer tokens between accounts", async function () {
+      await myToken.transfer(addr1.address, 50);
+      expect(await myToken.balanceOf(addr1.address)).to.equal(50);
 
-- **Mint new tokens**
-- **Burn tokens**
-- **Transfer tokens to another address**
+      await myToken.connect(addr1).transfer(addr2.address, 50);
+      expect(await myToken.balanceOf(addr2.address)).to.equal(50);
+    });
 
-These interactions can be done using the `web3.js` or `ethers.js` libraries, or through Polkadot.js.
+    it("Should fail if sender doesn't have enough tokens", async function () {
+      const initialOwnerBalance = await myToken.balanceOf(owner.address);
+      await expect(
+        myToken.connect(addr1).transfer(owner.address, 1)
+      ).to.be.revertedWith("ERC20: transfer amount exceeds balance");
+      expect(await myToken.balanceOf(owner.address)).to.equal(
+        initialOwnerBalance
+      );
+    });
+  });
+});
+```
+
+### Deployment Script
+
+Create `scripts/deploy.js`:
+
+```javascript
+const hre = require("hardhat");
+
+async function main() {
+  const [deployer] = await ethers.getSigners();
+  console.log("Deploying contracts with the account:", deployer.address);
+
+  const MyToken = await ethers.getContractFactory("MyToken");
+  const myToken = await MyToken.deploy(
+    "MyToken",
+    "MTK",
+    ethers.parseEther("1000000") // 1 million tokens
+  );
+
+  await myToken.waitForDeployment();
+  const address = await myToken.getAddress();
+
+  console.log("Token deployed to:", address);
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+```
+
+## Development Workflow
+
+1. **Compile Contracts**
+```bash
+npx hardhat compile
+```
+
+2. **Run Tests**
+```bash
+npx hardhat test
+```
+
+3. **Run Local Node (Optional)**
+```bash
+npx hardhat node
+```
+
+4. **Deploy to Commune Testnet**
+```bash
+npx hardhat run scripts/deploy.js --network commune
+```
+
+## Contract Verification
+
+Create `scripts/verify.js`:
+
+```javascript
+const hre = require("hardhat");
+
+async function main() {
+  const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS";
+  
+  await hre.run("verify:verify", {
+    address: contractAddress,
+    constructorArguments: [
+      "MyToken",
+      "MTK",
+      ethers.parseEther("1000000")
+    ],
+  });
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+```
+
+To verify:
+```bash
+npx hardhat run scripts/verify.js --network commune
+```
+
+## Interacting with Deployed Contracts
+
+Create `scripts/interact.js`:
+
+```javascript
+const hre = require("hardhat");
+
+async function main() {
+  const contractAddress = "YOUR_DEPLOYED_CONTRACT_ADDRESS";
+  const MyToken = await ethers.getContractFactory("MyToken");
+  const myToken = MyToken.attach(contractAddress);
+
+  // Get total supply
+  const totalSupply = await myToken.totalSupply();
+  console.log("Total Supply:", ethers.formatEther(totalSupply));
+
+  // Get balance
+  const [signer] = await ethers.getSigners();
+  const balance = await myToken.balanceOf(signer.address);
+  console.log("Balance:", ethers.formatEther(balance));
+
+  // Transfer tokens
+  const transferAmount = ethers.parseEther("100");
+  const tx = await myToken.transfer("RECIPIENT_ADDRESS", transferAmount);
+  await tx.wait();
+  console.log("Transfer successful!");
+}
+
+main()
+  .then(() => process.exit(0))
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
+```
+
+## Best Practices
+
+1. **Security**
+   - Never commit `.env` files
+   - Use `@openzeppelin/contracts` for standard implementations
+   - Always run tests before deployment
+
+2. **Gas Optimization**
+   - Use appropriate Solidity compiler optimization settings
+   - Implement gas-efficient patterns in your contracts
+   - Monitor gas prices on the network
+
+3. **Testing**
+   - Write comprehensive unit tests
+   - Test on local network before deploying
+   - Use hardhat console.log for debugging
+
+4. **Deployment**
+   - Keep track of deployed contract addresses
+   - Verify contracts after deployment
+   - Document deployment parameters
 
 ## Troubleshooting
 
-- **1010: Invalid Transaction: Inability to pay fees**: Ensure your deployer account has sufficient balance to cover transaction fees. Add more funds to the deployer account if necessary.
-- **Compilation errors**: If you encounter issues during compilation, ensure you have the correct Solidity version and OpenZeppelin dependencies.
+Common issues and solutions:
+- **Nonce too high**: Reset MetaMask account
+- **Gas estimation failed**: Check contract constructor parameters
+- **Network connection issues**: Verify RPC URL and network status
+- **Compilation errors**: Check Solidity version compatibility
+- **Deployment timeout**: Adjust gas price or limit
 
-## License
+## Additional Resources
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
----
-
-This **README** provides instructions on compiling, deploying, and interacting with the contract on a Substrate-based EVM chain. Let me know if you'd like to add anything specific!
+- [Hardhat Documentation](https://hardhat.org/docs)
+- [OpenZeppelin Contracts](https://docs.openzeppelin.com/contracts)
+- [Ethers.js Documentation](https://docs.ethers.org/v6/)
