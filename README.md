@@ -249,10 +249,39 @@ main()
 ```bash
 npx hardhat run scripts/check-price.js --network commune
 ```
+Output:
+```bash
+NVIDIA Token Price Info:
+------------------------
+Current Price: $148.38
+Last Update: 11/12/2024, 9:07:04 PM
+
+Debug Info:
+Raw price value: 14838
+Raw timestamp: 1731442024
 ### To update price of pegged token:
+```
+
 ```bash
 npx hardhat run scripts/update-price.js --network commune
 ```
+
+```bash
+Current signer: 0x27fDBEd37eca90D10e9ce2210fafC87E3B9582EF
+Contract owner: 0x27fDBEd37eca90D10e9ce2210fafC87E3B9582EF
+Is signer owner? true
+
+Current price: 15
+Fetching current NVIDIA stock price...
+Raw Pyth price: 14837500
+Price in dollars: 148.375
+Adjusted price for contract: 14838
+Current NVIDIA stock price: $ 148.38
+Attempting to set new price to: 14838
+Transaction sent: 0xdc730b884c3ec44eb976735d6a9601c4f69e0e8be9a6d215e675656d4dc3d8ae
+Waiting for confirmation...
+```
+
 ## Interacting with Deployed Contracts
 
 Create `scripts/interact.js`:
