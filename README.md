@@ -259,9 +259,9 @@ Last Update: 11/12/2024, 9:07:04 PM
 Debug Info:
 Raw price value: 14838
 Raw timestamp: 1731442024
-### To update price of pegged token:
-```
 
+```
+### To update price of pegged token:
 ```bash
 npx hardhat run scripts/update-price.js --network commune
 ```
