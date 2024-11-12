@@ -283,7 +283,8 @@ Waiting for confirmation...
 ```
 ### To peg any STOCK
 1) Change the contract name in deploynvidia.js and update-price-v2.js to the stock you want to peg and run the deployment script.
-2) Update the price id from pyth.network in update-price-v2.js to the price id of the stock you want to peg.
+2) Update the price id from [pyth.network](https://www.pyth.network/price-feeds) in update-price-v2.js to the price id of the stock you want to peg. The feed id for [tesla](https://www.pyth.network/price-feeds/equity-us-tsla-usd) for example is that erc-20 address `0x16dad506d7db8da01c87581c87ca897a012a153557d4d578c3b9c9e1bc0632f1`. 
+
 3) Run the update-price-v2.js script to update the price of the stock.
 ## Interacting with Deployed Contracts
 
