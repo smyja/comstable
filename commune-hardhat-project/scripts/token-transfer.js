@@ -3,8 +3,8 @@ const hre = require("hardhat");
 
 async function main() {
     const contractAddress = "0x87d87b0a79f7bf4b9c0289371ef60a7f9205d645"; // Your token contract
-    const recipientAddress = "0xAf6edfFd92c8b6E88A714c4F2cBCb0Bd21902a51"; // The recipient's EVM address
-    const transferAmount = "100"; // Amount to transfer
+    const recipientAddress = "0x077Fc847c25d680053E98e66016f1788F016E20a"; // The recipient's EVM address
+    const transferAmount = "10000"; // Amount to transfer
 
     const [signer] = await ethers.getSigners();
     console.log("Sending from:", signer.address);

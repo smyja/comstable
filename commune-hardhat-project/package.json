@@ -14,5 +14,11 @@
     "@openzeppelin/contracts": "^5.1.0",
     "dotenv": "^16.4.5",
     "hardhat": "^2.22.15"
+  },
+  "dependencies": {
+    "@layerzerolabs/solidity-examples": "^1.1.0",
+    "@pythnetwork/price-service-client": "^1.9.0",
+    "@pythnetwork/pyth-sdk-solidity": "^4.0.0",
+    "axios": "^1.7.7"
   }
 }

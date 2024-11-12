@@ -1,4 +1,3 @@
-// scripts/deploy.js
 const hre = require("hardhat");
 
 async function waitForTransaction(provider, txHash, timeout = 60000) {
@@ -9,7 +8,7 @@ async function waitForTransaction(provider, txHash, timeout = 60000) {
     if (receipt) {
       return receipt;
     }
-    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second between checks
+    await new Promise(resolve => setTimeout(resolve, 1000));
   }
   throw new Error("Transaction confirmation timeout");
 }
@@ -23,7 +22,7 @@ async function main() {
     console.log("Account balance:", ethers.formatEther(balance), "COMAI");
 
     console.log("Compiling contract...");
-    const MyToken = await ethers.getContractFactory("Musdt");
+    const NvidiaPeggedToken = await ethers.getContractFactory("NvidiaPeggedToken");
 
     const nonce = await ethers.provider.getTransactionCount(deployer.address);
     console.log("Current nonce:", nonce);
@@ -40,11 +39,10 @@ async function main() {
       nonce: deploymentOptions.nonce
     });
 
-    // Deploy with transaction hash tracking
-    const deployTransaction = await MyToken.getDeployTransaction(
-      "Sapa",
-      "sapa",
-      ethers.parseEther("1000000"),
+    const deployTransaction = await NvidiaPeggedToken.getDeployTransaction(
+      "NvidiaPeggedToken",  // name
+      "NVDA",              // symbol
+      ethers.parseEther("1000000"),  // initialSupply
       deploymentOptions
     );
 
