@@ -283,7 +283,7 @@ Waiting for confirmation...
 ```
 ### To peg any STOCK
 1) Change the contract name in deploynvidia.js and update-price-v2.js to the stock you want to peg and run the deployment script.
-2) Update the price id from pyth network in update-price-v2.js to the price id of the stock you want to peg.
+2) Update the price id from pyth.network in update-price-v2.js to the price id of the stock you want to peg.
 3) Run the update-price-v2.js script to update the price of the stock.
 ## Interacting with Deployed Contracts
 
