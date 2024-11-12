@@ -245,11 +245,14 @@ main()
   });
 ```
 
-To verify:
+To Check price of pegged token:
 ```bash
-npx hardhat run scripts/verify.js --network commune
+npx hardhat run scripts/check-price.js --network commune
 ```
-
+To update price of pegged token:
+```bash
+npx hardhat run scripts/update-price.js --network commune
+```
 ## Interacting with Deployed Contracts
 
 Create `scripts/interact.js`:

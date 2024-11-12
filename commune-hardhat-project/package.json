@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "worker:deploy": "cd worker && wrangler deploy",
+    "worker:dev": "cd worker && wrangler dev",
+    "worker:logs": "cd worker && wrangler tail"
   },
   "keywords": [],
   "author": "",
@@ -13,7 +16,8 @@
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
     "dotenv": "^16.4.5",
-    "hardhat": "^2.22.15"
+    "hardhat": "^2.22.15",
+    "wrangler": "^3.86.1"
   },
   "dependencies": {
     "@layerzerolabs/solidity-examples": "^1.1.0",
