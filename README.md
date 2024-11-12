@@ -281,7 +281,10 @@ Attempting to set new price to: 14838
 Transaction sent: 0xdc730b884c3ec44eb976735d6a9601c4f69e0e8be9a6d215e675656d4dc3d8ae
 Waiting for confirmation...
 ```
-
+### To peg any STOCK
+1) Change the contract name in deploynvidia.js and update-price-v2.js to the stock you want to peg and run the deployment script.
+2) Update the price id from pyth network in update-price-v2.js to the price id of the stock you want to peg.
+3) Run the update-price-v2.js script to update the price of the stock.
 ## Interacting with Deployed Contracts
 
 Create `scripts/interact.js`:
