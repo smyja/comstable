@@ -245,11 +245,11 @@ main()
   });
 ```
 
-To Check price of pegged token:
+### To Check price of pegged token:
 ```bash
 npx hardhat run scripts/check-price.js --network commune
 ```
-To update price of pegged token:
+### To update price of pegged token:
 ```bash
 npx hardhat run scripts/update-price.js --network commune
 ```
